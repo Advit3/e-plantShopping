@@ -19,11 +19,11 @@ export default function CartItem() {
         <div className="cart-layout">
           <section className="cart-list" aria-label="Items in your shopping cart">
             {items.map((item) => <article className="cart-row cart-item" key={item.id}>
-              <div className="cart-thumb cart-item-image" role="img" aria-label={item.name} style={{ backgroundImage: `url("${item.image}")` }}/>
+              <img className="cart-thumb cart-item-image" src={item.image} alt={item.name} />
               <div className="cart-item-info"><h2>{item.name}</h2><p>${item.price.toFixed(2)} each</p></div>
               <div className="quantity-control quantity-controls" aria-label={`Quantity for ${item.name}`}><button type="button" aria-label={`Decrease ${item.name} quantity`} onClick={() => dispatch(updateQuantity({ id:item.id, quantity:item.quantity-1 }))}><Minus size={13}/></button><span>{item.quantity}</span><button type="button" aria-label={`Increase ${item.name} quantity`} onClick={() => dispatch(updateQuantity({ id:item.id, quantity:item.quantity+1 }))}><Plus size={13}/></button></div>
               <div className="line-price"><strong className="item-total">${(item.price * item.quantity).toFixed(2)}</strong><small>Item total</small></div>
-              <button className="remove-button delete-button" type="button" aria-label={`Remove ${item.name}`} onClick={() => dispatch(removeItem(item.id))}><Trash2 size={17}/><span className="sr-only">Delete</span></button>
+              <button className="remove-button delete-button" type="button" aria-label={`Remove ${item.name}`} onClick={() => dispatch(removeItem(item.id))}><Trash2 size={17}/><span>Delete</span></button>
             </article>)}
             <Link className="continue-link continue-shopping-button" to="/plants"><ArrowLeft size={15}/> Continue shopping</Link>
           </section>
