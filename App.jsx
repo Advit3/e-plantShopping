@@ -13,7 +13,7 @@ function LandingPage({ companyName, setShowProductList, showProductList }) {
     navigate('/plants');
   };
   return (
-    <main className="landing">
+    <main className="landing background-image">
       <div className="landing-shade" />
       <Navbar overlay />
       <section className="landing-content" aria-labelledby="landing-title">

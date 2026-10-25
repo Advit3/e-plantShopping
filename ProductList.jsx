@@ -1,7 +1,7 @@
 import { Leaf, Plus, Check } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
 import { addItem } from './CartSlice.jsx';
-import Navbar from './Navbar.jsx';
 
 // The rubric asks for plants grouped under categories, so every category and
 // its six plant objects are kept together in this file.
@@ -49,7 +49,10 @@ export default function ProductList() {
 
   return (
     <>
-      <Navbar />
+      <header className="navbar" aria-label="Product listing navigation">
+        <Link className="brand" to="/"><span className="brand-mark"><Leaf /></span><span>Paradise Nursery<small>grow a happier home</small></span></Link>
+        <nav className="nav-links" aria-label="Main navigation"><Link to="/">Home</Link><Link to="/plants">Plants</Link><Link className="nav-cart" to="/cart">Cart <span className="cart-badge" aria-live="polite">{cartCount}</span></Link></nav>
+      </header>
       <main className="page-shell catalog-page">
         <section className="section-heading">
           <div><div className="eyebrow"><Leaf size={15} /> The plant edit</div><h1>Find your green.</h1><p>Good plants, ready to make themselves at home.</p></div>
