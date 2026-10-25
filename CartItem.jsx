@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { removeItem, updateQuantity } from './CartSlice.jsx';
-import Navbar from './Navbar.jsx';
 
 export default function CartItem() {
   const dispatch = useDispatch();
