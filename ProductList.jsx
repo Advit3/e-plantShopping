@@ -1,11 +1,13 @@
 import { Leaf, Plus, Check } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import { addItem } from './CartSlice.jsx';
 
 // The rubric asks for plants grouped under categories, so every category and
 // its six plant objects are kept together in this file.
-const plantCategories = [
+const plantsArray = [
   {
     category: 'Air Purifying Plants',
     plants: [
@@ -41,36 +43,57 @@ const plantCategories = [
   },
 ];
 
+export function ShoppingNavbar() {
+  const navigate = useNavigate();
+  const cartItems = useSelector((state) => state.cart.items);
+  const cartCount = cartItems.reduce((total, item) => total + item.quantity, 0);
+  const handleHomeClick = () => navigate('/');
+  const handlePlantsClick = () => navigate('/plants');
+  const handleCartClick = () => navigate('/cart');
+  const navigateFromLink = (event, handler) => { event.preventDefault(); handler(); };
+  return (
+    <header className="navbar" aria-label="Paradise Nursery navigation">
+      <Link className="brand" to="/" onClick={(event) => navigateFromLink(event, handleHomeClick)}><span className="brand-mark"><Leaf /></span><span>Paradise Nursery<small>grow a happier home</small></span></Link>
+      <nav className="nav-links" aria-label="Main navigation">
+        <Link to="/" onClick={(event) => navigateFromLink(event, handleHomeClick)}>Home</Link>
+        <Link to="/plants" onClick={(event) => navigateFromLink(event, handlePlantsClick)}>Plants</Link>
+        <Link className="nav-cart" to="/cart" onClick={(event) => navigateFromLink(event, handleCartClick)}>Cart <span className="cart-badge" aria-live="polite">{cartCount}</span></Link>
+      </nav>
+    </header>
+  );
+}
+
 export default function ProductList() {
   const dispatch = useDispatch();
   const cartItems = useSelector((state) => state.cart.items);
   const cartCount = cartItems.reduce((total, item) => total + item.quantity, 0);
-  const cartProductIds = new Set(cartItems.map((item) => item.id));
+  const [addedToCart, setAddedToCart] = useState(() => Object.fromEntries(cartItems.map((item) => [item.name, true])));
+  const handleAddToCart = (plant) => {
+    dispatch(addItem({ ...plant, image: plant.thumbnail, cost: plant.price }));
+    setAddedToCart((current) => ({ ...current, [plant.name]: true }));
+  };
 
   return (
     <>
-      <header className="navbar" aria-label="Product listing navigation">
-        <Link className="brand" to="/"><span className="brand-mark"><Leaf /></span><span>Paradise Nursery<small>grow a happier home</small></span></Link>
-        <nav className="nav-links" aria-label="Main navigation"><Link to="/">Home</Link><Link to="/plants">Plants</Link><Link className="nav-cart" to="/cart">Cart <span className="cart-badge" aria-live="polite">{cartCount}</span></Link></nav>
-      </header>
+      <ShoppingNavbar />
       <main className="page-shell catalog-page">
         <section className="section-heading">
           <div><div className="eyebrow"><Leaf size={15} /> The plant edit</div><h1>Find your green.</h1><p>Good plants, ready to make themselves at home.</p></div>
         </section>
         <div className="catalog-tools"><span>18 plants</span><span>3 thoughtful collections</span><span className="catalog-cart-count" aria-live="polite">Cart: {cartCount} items</span></div>
-        {plantCategories.map((group) => (
-          <section className="plant-category" key={group.category} aria-labelledby={`category-${group.category}`}>
+        {plantsArray.map((group) => (
+          <section className="plant-category product-list" key={group.category} aria-labelledby={`category-${group.category}`}>
             <div className="category-title"><h2 id={`category-${group.category}`}>{group.category}</h2><span>{group.plants.length} plants</span></div>
             <div className="plant-grid">
               {group.plants.map((plant) => {
-                const isAdded = cartProductIds.has(plant.id);
+                const isAdded = addedToCart[plant.name];
                 return (
                   <article className="plant-card" key={plant.id}>
                     <div className="plant-photo"><img className="plant-thumbnail" src={plant.thumbnail} alt={plant.name} /><span className="plant-tag">{plant.tag}</span></div>
                     <div className="plant-info">
                       <div className="plant-name-row"><h3>{plant.name}</h3><span className="plant-price">${plant.price.toFixed(2)}</span></div>
                       <p>{plant.description}</p>
-                      <button className="add-button" type="button" disabled={isAdded} onClick={() => dispatch(addItem({ ...plant, image: plant.thumbnail }))}>
+                      <button className="add-button" type="button" disabled={addedToCart[plant.name]} onClick={() => handleAddToCart(plant)}>
                         {isAdded ? <><Check size={15} /> Added to cart</> : <><Plus size={15} /> Add to Cart</>}
                       </button>
                     </div>

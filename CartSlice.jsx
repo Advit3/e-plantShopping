@@ -11,7 +11,8 @@ const cartSlice = createSlice({
       else state.items.push({ ...product, quantity: 1 });
     },
     removeItem(state, action) {
-      state.items = state.items.filter((item) => item.id !== action.payload);
+      const itemName = typeof action.payload === 'string' ? action.payload : action.payload?.name;
+      state.items = state.items.filter((item) => item.name !== itemName && item.id !== action.payload);
     },
     updateQuantity(state, action) {
       const { id, quantity } = action.payload;
